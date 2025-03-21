@@ -1,0 +1,12 @@
+# テキストファイルは自動で改行コードを変換
+* text=auto
+
+# 特定のファイルはLFを維持
+*.sh text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.md text eol=lf
+
+# Windows用のCRLFを維持
+*.bat text eol=crlf
+*.cmd text eol=crlf
