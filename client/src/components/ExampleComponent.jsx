@@ -1,12 +1,28 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
-const ExampleComponent = () => {
-    return (
-        <div>
-            <h1>Example Component</h1>
-            <p>This is an example component for the social request PWA.</p>
-        </div>
-    );
-};
+function ExampleComponent() {
+  const [examples, setExamples] = useState([]);
+
+  useEffect(() => {
+    // 環境変数から API URL を取得
+    const apiUrl = process.env.REACT_APP_API_URL;
+
+    fetch(`${apiUrl}/examples`)
+      .then((response) => response.json())
+      .then((data) => setExamples(data))
+      .catch((error) => console.error('Error fetching examples:', error));
+  }, []);
+
+  return (
+    <div>
+      <h1>Examples</h1>
+      <ul>
+        {examples.map((example) => (
+          <li key={example.id}>{example.name}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 export default ExampleComponent;

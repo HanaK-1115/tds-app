@@ -1,11 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const exampleController = require('../controllers/exampleController');
 
-// GET example route
-router.get('/', exampleController.getExamples);
-
-// POST example route
-router.post('/', exampleController.createExample);
+// サンプルの GET エンドポイント
+router.get('/', (req, res) => {
+    res.json({ message: 'Hello from /api/examples!' });
+});
 
 module.exports = router;

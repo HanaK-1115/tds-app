@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const express = require('express');
 const { Pool } = require('pg'); // PostgreSQL 用のライブラリ
+const cors = require('cors');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -23,8 +24,16 @@ pool.connect()
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// CORS 設定
+app.use(cors({
+    origin: 'https://tds-app-lg8l.onrender.com', // フロントエンドの URL を指定
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+}));
+
 // Routes
+const exampleRoutes = require('./routes/exampleRoutes');
 app.use('/api/examples', exampleRoutes);
+
 app.get('/', (req, res) => {
     res.send('Hello, World!');
 });
