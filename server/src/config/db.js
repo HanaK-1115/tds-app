@@ -1,16 +1,19 @@
-const { Pool } = require('pg');
+const { Sequelize } = require('sequelize');
 
-const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
+const sequelize = new Sequelize(process.env.DATABASE_URL, {
+    dialect: 'postgres',
     ssl: {
         rejectUnauthorized: false,
     },
 });
 
-const connectToDatabase = () => {
-    pool.connect()
-        .then(() => console.log('Connected to PostgreSQL'))
-        .catch(err => console.error('PostgreSQL connection error:', err));
+const connectToDatabase = async () => {
+    try {
+        await sequelize.authenticate();
+        console.log('Connected to PostgreSQL');
+    } catch (err) {
+        console.error('PostgreSQL connection error:', err);
+    }
 };
 
-module.exports = { pool, connectToDatabase };
+module.exports = { sequelize, connectToDatabase };
