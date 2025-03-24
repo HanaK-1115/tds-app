@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import AppInstallPage from './pages/AppInstallPage';
 import ExampleComponent from './components/ExampleComponent';
-import AddedToHomePage from './pages/AddedToHomePage';
+import MainLayout from './layouts/MainLayout';
 import ErrorBoundary from './components/ErrorBoundary'; // エラーバウンダリをインポート
 import './styles/App.css';
 
@@ -14,7 +14,7 @@ function App() {
           <Routes>
             <Route path="/" element={<RedirectToHome />} /> {/* リダイレクトロジック */}
             <Route path="/example" element={<ExampleComponent />} />
-            <Route path="/added-to-home" element={<AddedToHomePage />} />
+            <Route path="/added-to-home" element={<MainLayout />} />
           </Routes>
         </div>
       </Router>

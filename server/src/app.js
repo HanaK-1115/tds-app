@@ -4,6 +4,10 @@ const exampleRoutes = require('./routes/exampleRoutes');
 const errorRoutes = require('./routes/errorRoutes');
 const corsConfig = require('./middleware/corsConfig');
 
+// 定期処理
+// 毎日午前0時に有給日数を更新するタスク
+require('./tasks/updatePaidLeave');
+
 const app = express();
 
 // Middleware
