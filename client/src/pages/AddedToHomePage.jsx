@@ -4,7 +4,6 @@ import MainLayout from '../layouts/MainLayout';
 
 const AddedToHomePage = () => {
     return (
-        <MainLayout>
         <Container>
             <Typography variant="h4" component="h1" gutterBottom>
                 ホーム画面に追加されました！
@@ -14,7 +13,6 @@ const AddedToHomePage = () => {
                 これからは、ブラウザを開かずにアプリをすぐに起動できます。
             </Typography>
         </Container>
-        </MainLayout>
     );
 };
 

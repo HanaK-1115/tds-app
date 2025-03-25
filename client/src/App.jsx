@@ -3,7 +3,9 @@ import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-route
 import AppInstallPage from './pages/AppInstallPage';
 import ExampleComponent from './components/ExampleComponent';
 import MainLayout from './layouts/MainLayout';
-import ErrorBoundary from './components/ErrorBoundary'; // エラーバウンダリをインポート
+import AddedToHomePage from './pages/AddedToHomePage';
+import SignUpForm from './pages/SignUpForm';
+import ErrorBoundary from './components/ErrorBoundary';
 import './styles/App.css';
 
 function App() {
@@ -12,9 +14,13 @@ function App() {
       <Router>
         <div className="App">
           <Routes>
-            <Route path="/" element={<RedirectToHome />} /> {/* リダイレクトロジック */}
-            <Route path="/example" element={<ExampleComponent />} />
-            <Route path="/added-to-home" element={<MainLayout />} />
+            <Route path="/" element={<RedirectToHome />} />
+            <Route element={<MainLayout />}>
+              <Route path="/example" element={<ExampleComponent />} />
+              <Route path="/sign-up-form" element={<SignUpForm />} />
+              <Route path="/added-to-home" element={<AddedToHomePage />} />
+              <Route path="/register" element={<SignUpForm />} />
+            </Route>
           </Routes>
         </div>
       </Router>
@@ -29,11 +35,11 @@ function RedirectToHome() {
   useEffect(() => {
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
     if (isStandalone) {
-      navigate('/added-to-home'); // スタンドアロンモードなら /added-to-home にリダイレクト
+      navigate('/added-to-home');
     }
   }, [navigate]);
 
-  return <AppInstallPage />; // 通常モードでは AppInstallPage を表示
+  return <AppInstallPage />;
 }
 
 export default App;
