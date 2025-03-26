@@ -7,24 +7,33 @@ import AddedToHomePage from './pages/AddedToHomePage';
 import SignUpForm from './pages/SignUpForm';
 import ErrorBoundary from './components/ErrorBoundary';
 import './styles/App.css';
+import SignInPage from './pages/SignInPage';
+import { AuthProvider } from './hooks/useAuth';
+import PrivateRoute from './components/PrivateRoute';
 
 function App() {
   return (
-    <ErrorBoundary>
-      <Router>
-        <div className="App">
-          <Routes>
-            <Route path="/" element={<RedirectToHome />} />
-            <Route element={<MainLayout />}>
-              <Route path="/example" element={<ExampleComponent />} />
-              <Route path="/sign-up-form" element={<SignUpForm />} />
-              <Route path="/added-to-home" element={<AddedToHomePage />} />
+    <AuthProvider>
+      <ErrorBoundary>
+        <Router>
+          <div className="App">
+            <Routes>
+              <Route path="/" element={<SignInPage />} />
               <Route path="/register" element={<SignUpForm />} />
-            </Route>
-          </Routes>
-        </div>
-      </Router>
-    </ErrorBoundary>
+              
+              {/* 認証が必要なルート */}
+              <Route element={<PrivateRoute />}>
+                <Route path="/home" element={<MainLayout />}>
+                  {/* MainLayoutの子ルート */}
+                  {/* <Route index element={<Dashboard />} /> */}
+                  {/* 他のルート... */}
+                </Route>
+              </Route>
+            </Routes>
+          </div>
+        </Router>
+      </ErrorBoundary>
+    </AuthProvider>
   );
 }
 

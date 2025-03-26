@@ -44,7 +44,7 @@ const Users = sequelize.define('Users', {
     allowNull: false
   },
   role: {
-    // ユーザーの役割（Rolesテーブルを参照）
+    // 役職（Rolesテーブルを参照）
     type: DataTypes.INTEGER,
     references: {
       model: Roles,

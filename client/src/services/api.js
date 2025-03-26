@@ -72,6 +72,24 @@ export const loginUser = async (credentials) => {
 };
 
 /**
+ * ユーザーサインインAPI
+ * @param {Object} credentials ログイン情報
+ * @returns {Promise} ログイン結果
+ */
+export const signInUser = async (credentials) => {
+  try {
+    const response = await apiClient.post('/auth/login', credentials);
+    // 認証トークンをローカルストレージに保存
+    if (response.data.token) {
+      localStorage.setItem('token', response.data.token);
+    }
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+/**
  * ログアウトAPI
  * @returns {void}
  */

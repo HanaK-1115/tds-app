@@ -257,17 +257,21 @@ const SignUpForm = () => {
                   required
                   error={!!errors.role}
                 >
-                  <InputLabel id="role-label">権限レベル</InputLabel>
+                  <InputLabel id="role-label">役職</InputLabel>
                   <Select
                     labelId="role-label"
                     id="role"
                     name="role"
                     value={formData.role}
-                    label="権限レベル"
+                    label="役職"
                     onChange={handleChange}
                   >
                     <MenuItem value="1">管理者</MenuItem>
-                    <MenuItem value="2">従業員</MenuItem>
+                    <MenuItem value="2">MNG</MenuItem>
+                    <MenuItem value="3">PM</MenuItem>
+                    <MenuItem value="4">ENG</MenuItem>
+                    <MenuItem value="5">ST</MenuItem>
+                    <MenuItem value="6">AST</MenuItem>
                   </Select>
                   {errors.role && <FormHelperText>{errors.role}</FormHelperText>}
                 </FormControl>
