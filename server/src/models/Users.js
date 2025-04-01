@@ -1,6 +1,6 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
-const PaidLeaveApplication = require('./PaidLeaveApplication'); // PaidLeaveApplicationモデルをインポート
+const PaidLeaveApplication = require('./PaidLeaveApplication');
 const bcrypt = require('bcrypt');
 const Departments = require('./reference/Departments');
 const Roles = require('./reference/Roles');
@@ -43,7 +43,7 @@ const Users = sequelize.define('Users', {
     type: DataTypes.STRING,
     allowNull: false
   },
-  role: {
+  roleId: {
     // 役職（Rolesテーブルを参照）
     type: DataTypes.INTEGER,
     references: {
@@ -70,8 +70,10 @@ Users.beforeUpdate(async (users) => {
   }
 });
 
-Users.hasMany(PaidLeaveApplication, { foreignKey: 'userId' });
-PaidLeaveApplication.belongsTo(Users, { foreignKey: 'userId' });
+// パスワード検証メソッドを追加
+Users.prototype.isValidPassword = async function(password) {
+  return await bcrypt.compare(password, this.password);
+};
 
 // リレーションを定義
 Users.belongsTo(Departments, { foreignKey: 'departmentId' });
@@ -79,5 +81,8 @@ Departments.hasMany(Users, { foreignKey: 'departmentId' });
 
 Users.belongsTo(Roles, { foreignKey: 'roleId' });
 Roles.hasMany(Users, { foreignKey: 'roleId' });
+
+Users.hasMany(PaidLeaveApplication, { foreignKey: 'userId' });
+PaidLeaveApplication.belongsTo(Users, { foreignKey: 'userId' });
 
 module.exports = Users;

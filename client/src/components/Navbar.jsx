@@ -18,12 +18,15 @@ import LoginIcon from '@mui/icons-material/Login';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const { user, logout } = useAuth();
   
   // モバイルメニューの状態
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
@@ -37,20 +40,34 @@ const Navbar = () => {
     setMobileMoreAnchorEl(null);
   };
   
-  const handleNavigation = (path) => {
-    navigate(path);
+  const handleLogout = () => {
+    logout();
+    navigate('/'); // ログインページにリダイレクト
+  };
+
+  // ログイン状態に応じたナビゲーション項目
+  const navItems = user
+    ? [
+        { text: 'ホーム', path: '/home', icon: <HomeIcon /> },
+        { text: 'ログアウト', onClick: handleLogout, icon: <LogoutIcon /> },
+      ]
+    : [
+        { text: 'ホーム', path: '/', icon: <HomeIcon /> },
+        { text: 'ログイン', path: '/', icon: <LoginIcon /> },
+        { text: '登録', path: '/register', icon: <PersonAddIcon /> },
+      ];
+
+  const handleNavigation = (item) => {
+    if (item.onClick) {
+      item.onClick();
+    } else if (item.path) {
+      navigate(item.path);
+    }
     handleMobileMenuClose();
   };
 
   // 現在のパスがナビゲーションアイテムと一致するか確認
   const isActive = (path) => location.pathname === path;
-
-  // ナビゲーション項目のリスト
-  const navItems = [
-    { text: 'ホーム', path: '/added-to-home', icon: <HomeIcon /> },
-    { text: 'ログイン', path: '/', icon: <LoginIcon /> },
-    { text: '登録', path: '/sign-up-form', icon: <PersonAddIcon /> },
-  ];
 
   // モバイルメニュー
   const mobileMenuId = 'primary-search-account-menu-mobile';
@@ -73,9 +90,9 @@ const Navbar = () => {
       {navItems.map((item) => (
         <MenuItem 
           key={item.text} 
-          onClick={() => handleNavigation(item.path)}
+          onClick={() => handleNavigation(item)}
           sx={{ 
-            backgroundColor: isActive(item.path) ? 'rgba(0, 0, 0, 0.04)' : 'transparent' 
+            backgroundColor: item.path && isActive(item.path) ? 'rgba(0, 0, 0, 0.04)' : 'transparent' 
           }}
         >
           <IconButton
@@ -123,10 +140,10 @@ const Navbar = () => {
               <Button 
                 key={item.text}
                 color="inherit"
-                onClick={() => handleNavigation(item.path)}
+                onClick={() => handleNavigation(item)}
                 sx={{ 
                   mx: 1,
-                  backgroundColor: isActive(item.path) ? 'rgba(255, 255, 255, 0.08)' : 'transparent'
+                  backgroundColor: item.path && isActive(item.path) ? 'rgba(255, 255, 255, 0.08)' : 'transparent'
                 }}
                 startIcon={item.icon}
               >

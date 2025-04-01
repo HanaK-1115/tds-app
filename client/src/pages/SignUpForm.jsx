@@ -18,6 +18,7 @@ import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import CircularProgress from '@mui/material/CircularProgress';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 // これは将来的には共通テーマファイルに移動することをお勧めします
 const theme = createTheme();
@@ -33,9 +34,9 @@ const SignUpForm = () => {
     passwordConfirm: '',
     lastName: '',
     firstName: '',
-    department: '',
-    role: '',
-    joinDate: new Date().toISOString().split('T')[0], // 今日の日付をデフォルト値に
+    departmentId: '',
+    roleId: '',
+    joinDate: '',
     paidLeaveDays: ''
   });
   
@@ -114,12 +115,12 @@ const SignUpForm = () => {
       const userData = {
         username: formData.username,
         password: formData.password,
-        department: Number(formData.department),
+        departmentId: Number(formData.departmentId),
         lastName: formData.lastName,
         firstName: formData.firstName,
         join_date: formData.joinDate,
         remaining_leave_days: Number(formData.paidLeaveDays),
-        role: Number(formData.role),
+        roleId: Number(formData.roleId)
       };
       
       const response = await registerUser(userData);
@@ -232,14 +233,14 @@ const SignUpForm = () => {
                 <FormControl 
                   fullWidth 
                   required
-                  error={!!errors.department}
+                  error={!!errors.departmentId}
                 >
-                  <InputLabel id="department-label">所属部署</InputLabel>
+                  <InputLabel id="departmentId-label">所属部署</InputLabel>
                   <Select
-                    labelId="department-label"
-                    id="department"
-                    name="department"
-                    value={formData.department}
+                    labelId="departmentId-label"
+                    id="departmentId"
+                    name="departmentId"
+                    value={formData.departmentId}
                     label="所属部署"
                     onChange={handleChange}
                   >
@@ -248,21 +249,21 @@ const SignUpForm = () => {
                     <MenuItem value="3">LSI設計</MenuItem>
                     <MenuItem value="4">ソフトウェア設計</MenuItem>
                   </Select>
-                  {errors.department && <FormHelperText>{errors.department}</FormHelperText>}
+                  {errors.departmentId && <FormHelperText>{errors.departmentId}</FormHelperText>}
                 </FormControl>
               </Grid>
               <Grid item xs={12}>
                 <FormControl 
                   fullWidth 
                   required
-                  error={!!errors.role}
+                  error={!!errors.roleId}
                 >
-                  <InputLabel id="role-label">役職</InputLabel>
+                  <InputLabel id="roleId-label">役職</InputLabel>
                   <Select
-                    labelId="role-label"
-                    id="role"
-                    name="role"
-                    value={formData.role}
+                    labelId="roleId-label"
+                    id="roleId"
+                    name="roleId"
+                    value={formData.roleId}
                     label="役職"
                     onChange={handleChange}
                   >
@@ -273,7 +274,7 @@ const SignUpForm = () => {
                     <MenuItem value="5">ST</MenuItem>
                     <MenuItem value="6">AST</MenuItem>
                   </Select>
-                  {errors.role && <FormHelperText>{errors.role}</FormHelperText>}
+                  {errors.roleId && <FormHelperText>{errors.roleId}</FormHelperText>}
                 </FormControl>
               </Grid>
               <Grid item xs={12}>

@@ -1,6 +1,6 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
-const User = require('./User');
+const Users = require('./Users');
 
 // 有給休暇管理テーブルのモデル定義
 const PaidLeaveManagement = sequelize.define('PaidLeaveManagement', {
@@ -15,7 +15,7 @@ const PaidLeaveManagement = sequelize.define('PaidLeaveManagement', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: User,
+      model: Users,
       key: 'id'
     },
     onDelete: 'CASCADE'
@@ -27,15 +27,19 @@ const PaidLeaveManagement = sequelize.define('PaidLeaveManagement', {
   },
   remainingLeaveDays: {
     // 残り有給休暇日数
-    type: DataTypes.INTEGER,
-    allowNull: false
+    type: DataTypes.FLOAT,
+    allowNull: false,
+    defaultValue: 0,
+    validate: {
+      min: 0
+    }
   }
 }, {
-  tableName: 'paid_leaves_management',
-  timestamps: false
+  tableName: 'paid_leave_management',
+  timestamps: true
 });
 
-User.hasOne(PaidLeaveManagement, { foreignKey: 'userId', as: 'paidLeaveManagement' });
-PaidLeaveManagement.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+Users.hasOne(PaidLeaveManagement, { foreignKey: 'userId' });
+PaidLeaveManagement.belongsTo(Users, { foreignKey: 'userId' });
 
 module.exports = PaidLeaveManagement;

@@ -1,6 +1,6 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
-const User = require('./User');
+const Users = require('./Users');
 
 const OvertimeApplication = sequelize.define('OvertimeApplication', {
   id: {
@@ -14,7 +14,7 @@ const OvertimeApplication = sequelize.define('OvertimeApplication', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: User,
+      model: Users,
       key: 'id'
     },
     onDelete: 'CASCADE'
@@ -61,7 +61,7 @@ const OvertimeApplication = sequelize.define('OvertimeApplication', {
 });
 
 // リレーションの設定
-User.hasMany(OvertimeApplication, { foreignKey: 'userId', as: 'overtimeApplications' });
-OvertimeApplication.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+Users.hasMany(OvertimeApplication, { foreignKey: 'userId', as: 'overtimeApplications' });
+OvertimeApplication.belongsTo(Users, { foreignKey: 'userId', as: 'user' });
 
 module.exports = OvertimeApplication;

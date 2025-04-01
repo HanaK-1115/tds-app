@@ -1,17 +1,19 @@
 import axios from 'axios';
 
-// APIのベースURL（.envファイルから読み込むと良い）
-const API_BASE_URL = 'http://localhost:3001/api'; // 適宜、実際のAPIのURLに変更
+// APIのベースURL
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
-// Axiosインスタンスの作成
+console.log('Using API URL:', API_URL); // デバッグ用
+
+// Axiosインスタンスを作成
 const apiClient = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// リクエストインターセプター（認証トークンの追加などが必要な場合）
+// リクエストインターセプター
 apiClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
@@ -46,10 +48,42 @@ apiClient.interceptors.response.use(
  */
 export const registerUser = async (userData) => {
   try {
-    const response = await apiClient.post('/users/register', userData);
+    // フォーマット済みデータを作成
+    const formattedData = {
+      username: userData.username,
+      password: userData.password,
+      departmentId: userData.departmentId, 
+      lastName: userData.lastName,
+      firstName: userData.firstName,
+      join_date: userData.join_date,
+      remaining_leave_days: userData.remaining_leave_days,
+      roleId: userData.roleId
+    };
+    const response = await apiClient.post('/users/register', formattedData);
+    console.log('APIレスポンス:', response.data);
     return response.data;
   } catch (error) {
-    throw error;
+    console.error('ユーザー登録エラー詳細:', {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status,
+      requiredFields: error.response?.data?.requiredFields
+    });
+    
+    if (error.response && error.response.data) {
+      // サーバーからのエラーメッセージを使用
+      throw {
+        message: error.response.data.message || 'サーバーエラーが発生しました',
+        status: error.response.status,
+        data: error.response.data
+      };
+    }
+    
+    throw {
+      message: error.message || '予期せぬエラーが発生しました',
+      status: undefined,
+      data: undefined
+    };
   }
 };
 
@@ -111,7 +145,5 @@ export const fetchUserProfile = async () => {
     throw error;
   }
 };
-
-// その他必要なAPI関数を追加
 
 export default apiClient;

@@ -33,8 +33,14 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 
+// 管理者メニュー用アイコン
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import VpnKeyIcon from '@mui/icons-material/VpnKey';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+
 import { useNavigate, useLocation } from 'react-router-dom';
 import UserInfo from '../UserInfo';
+import { useAuth } from '../../hooks/useAuth'; // 認証コンテキストを使用してロールを取得
 
 const drawerWidth = 280;
 
@@ -42,10 +48,15 @@ const SideNav = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth(); // 現在のユーザー情報を取得
+  
+  // 管理者かどうかを判定
+  const isAdmin = user?.role?.id === 1 || user?.roleId === 1;
   
   // メニュー開閉状態の管理
   const [attendanceOpen, setAttendanceOpen] = useState(false);
   const [expenseOpen, setExpenseOpen] = useState(false);
+  const [adminOpen, setAdminOpen] = useState(false); // 管理者メニューの開閉状態
   
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -57,6 +68,10 @@ const SideNav = () => {
   
   const handleExpenseClick = () => {
     setExpenseOpen(!expenseOpen);
+  };
+  
+  const handleAdminClick = () => {
+    setAdminOpen(!adminOpen);
   };
   
   const handleNavigation = (path) => {
@@ -91,6 +106,12 @@ const SideNav = () => {
   const otherMenuItems = [
     { text: '設定', path: '/settings', icon: <SettingsIcon /> },
     { text: 'ヘルプ', path: '/help', icon: <HelpIcon /> },
+  ];
+
+  // 管理者メニュー項目
+  const adminMenuItems = [
+    { text: '招待コード発行', path: '/admin/invitations', icon: <VpnKeyIcon /> },
+    { text: 'ユーザー管理', path: '/admin/users', icon: <PersonAddIcon /> },
   ];
 
   // カスタムイベントのリスナーを設定
@@ -211,6 +232,45 @@ const SideNav = () => {
       </List>
       
       <Divider sx={{ borderColor: '#334155', my: 1 }} />
+      
+      {/* 管理者メニュー（管理者の場合のみ表示） */}
+      {isAdmin && (
+        <>
+          <List>
+            <ListItem disablePadding>
+              <ListItemButton onClick={handleAdminClick}>
+                <ListItemIcon sx={{ color: 'white' }}>
+                  <AdminPanelSettingsIcon />
+                </ListItemIcon>
+                <ListItemText primary="管理者機能" />
+                {adminOpen ? <ExpandLess /> : <ExpandMore />}
+              </ListItemButton>
+            </ListItem>
+            <Collapse in={adminOpen} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                {adminMenuItems.map((item) => (
+                  <ListItem key={item.text} disablePadding>
+                    <ListItemButton
+                      onClick={() => handleNavigation(item.path)}
+                      sx={{ 
+                        pl: 4,
+                        backgroundColor: isActive(item.path) ? 'rgba(255, 255, 255, 0.08)' : 'transparent',
+                        '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.16)' }
+                      }}
+                    >
+                      <ListItemIcon sx={{ color: 'white' }}>
+                        {item.icon}
+                      </ListItemIcon>
+                      <ListItemText primary={item.text} />
+                    </ListItemButton>
+                  </ListItem>
+                ))}
+              </List>
+            </Collapse>
+          </List>
+          <Divider sx={{ borderColor: '#334155', my: 1 }} />
+        </>
+      )}
       
       {/* その他のメニュー */}
       <List>

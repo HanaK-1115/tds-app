@@ -1,19 +1,23 @@
 const { Sequelize } = require('sequelize');
+const config = require('./config');
 
-const sequelize = new Sequelize(process.env.DATABASE_URL, {
-    dialect: 'postgres',
-    ssl: {
-        rejectUnauthorized: false,
-    },
-});
-
-const connectToDatabase = async () => {
-    try {
-        await sequelize.authenticate();
-        console.log('Connected to PostgreSQL');
-    } catch (err) {
-        console.error('PostgreSQL connection error:', err);
+// PostgreSQL接続
+const sequelize = new Sequelize(
+  config.database.name,
+  config.database.username,
+  config.database.password,
+  {
+    host: config.database.host,
+    port: config.database.port,
+    dialect: config.database.dialect,
+    logging: console.log,
+    pool: {
+      max: 5,
+      min: 0,
+      acquire: 30000,
+      idle: 10000
     }
-};
+  }
+);
 
-module.exports = { sequelize, connectToDatabase };
+module.exports = sequelize;
