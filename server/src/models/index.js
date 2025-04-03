@@ -1,5 +1,6 @@
 const sequelize = require('../config/db');
 const Users = require('./Users');
+const PaidLeaveManagement = require('./PaidLeaveManagement');
 const Departments = require('./reference/Departments');
 const Roles = require('./reference/Roles');
 
@@ -14,6 +15,7 @@ Roles.hasMany(Users, { foreignKey: 'roleId', as: 'users' });
 module.exports = {
   sequelize,
   Users,
+  PaidLeaveManagement,
   Departments,
   Roles
 };

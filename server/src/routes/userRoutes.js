@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
-const { authenticate, checkRole } = require('../middlewares/auth');
-const { validateUserCreate, validateUserUpdate } = require('../middlewares/validators');
+const { authenticate, checkRole } = require('../middleware/auth');
+const { validateUserCreate, validateUserUpdate } = require('../middleware/validators');
 
 // ユーザー管理ルート
 router.post('/register', userController.register); // roleId 1 = 管理者

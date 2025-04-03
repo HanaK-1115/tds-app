@@ -1,43 +1,79 @@
 const jwt = require('jsonwebtoken');
-const { Users } = require('../models');
 const config = require('../config/config');
+const { Users } = require('../models');
 
-exports.authenticateJWT = async (req, res, next) => {
-  const authHeader = req.headers.authorization;
-
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ 
-      success: false,
-      message: '認証トークンがありません。' 
-    });
-  }
-
-  const token = authHeader.split(' ')[1]; // "Bearer TOKEN"の形式から取得
-
+/**
+ * JWT認証ミドルウェア
+ */
+exports.authenticate = async (req, res, next) => {
   try {
+    // ヘッダーからトークンを取得
+    const authHeader = req.headers.authorization;
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (!token) {
+      return res.status(401).json({ 
+        message: '認証が必要です。有効なトークンを提供してください。' 
+      });
+    }
+
+    // トークンを検証
     const decoded = jwt.verify(token, config.jwt.secret);
     
     // ユーザーが存在するか確認
-    const user = await Users.findByPk(decoded.id, {
-      attributes: { exclude: ['password'] } // パスワードは除外
-    });
+    const user = await Users.findByPk(decoded.id);
     
     if (!user) {
       return res.status(401).json({ 
-        success: false,
-        message: 'ユーザーが見つかりません。' 
+        message: '無効なトークンです。ユーザーが見つかりません。' 
+      });
+    }
+
+    // リクエストオブジェクトにユーザー情報を追加
+    req.user = decoded;
+    next();
+    
+  } catch (error) {
+    if (error.name === 'TokenExpiredError') {
+      return res.status(401).json({ 
+        message: 'トークンの有効期限が切れています。再度ログインしてください。' 
       });
     }
     
-    // リクエストにユーザー情報を付加
-    req.user = user;
-    next();
-  } catch (error) {
-    console.error('JWT検証エラー:', error);
-    return res.status(401).json({ 
-      success: false,
-      message: '無効なトークンです。', 
-      error: error.message 
+    if (error.name === 'JsonWebTokenError') {
+      return res.status(401).json({ 
+        message: '無効なトークンです。' 
+      });
+    }
+    
+    console.error('認証エラー:', error);
+    return res.status(500).json({ 
+      message: '認証処理中にエラーが発生しました。' 
     });
   }
+};
+
+/**
+ * ロールベースの認可ミドルウェア
+ */
+exports.checkRole = (roles) => {
+  return (req, res, next) => {
+    if (!req.user) {
+      return res.status(401).json({ 
+        message: '認証が必要です。' 
+      });
+    }
+
+    // トークンから取得したroleIdを使用してロールを確認
+    const roleId = req.user.roleId;
+    
+    // roleIdを数値に変換して比較（roles配列には数値が含まれていると仮定）
+    if (!roles.includes(roleId)) {
+      return res.status(403).json({ 
+        message: 'このアクションを実行する権限がありません。' 
+      });
+    }
+
+    next();
+  };
 };

@@ -1,7 +1,6 @@
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan'); // HTTPリクエストログ用
-const exampleRoutes = require('./routes/exampleRoutes');
 const errorRoutes = require('./routes/errorRoutes');
 const userRoutes = require('./routes/userRoutes');
 const authRoutes = require('./routes/authRoutes'); // 認証ルートのインポート
@@ -51,7 +50,6 @@ app.use((req, res, next) => {
 });
 
 // Routes
-app.use('/api/examples', exampleRoutes);
 app.use('/api/log-error', errorRoutes);
 app.use('/api/users', userRoutes); // このパスが/api/usersになっているか確認
 app.use('/api/auth', authRoutes); // 認証ルートのマウント
